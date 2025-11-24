@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Ymaps Points</title>
+</head>
+
+<body>
+
+    <div
+        id="maps"
+        class="maps"
+    ></div>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+
+        .marker {
+            width: 32px;
+            height: 48px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+        }
+
+        .maps {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+
+    <script>
+
+        const YMAPS_CONFIG = {
+            apikey: "042405c2-12f5-4b78-9580-cb5ea1d7c106",
+            lang: "ru_RU"
+        };
+        const MAP_MARGIN = [200, 200, 200, 200];
+
+        let map;
+        const iconUrl = "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png";
+        const mapOptions = {
+            location: {
+                center: [37.618423, 55.751244],
+                zoom: 4
+            },
+            mode: "vector",
+            theme: "light",
+            zoomRange: { min: 3, max: 22 },
+            margin: MAP_MARGIN,
+            bounds: [[-83.8, -170.8], [83.8, 170.8]],
+        };
+
+
+        const pointsGeoJson = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 1,
+                        "excelRow": 1,
+                        "query": "Санкт-Петербург, Ул. Есенина, 5 литер Б",
+                        "citySource": "Санкт-Петербург",
+                        "addressSource": "Ул. Есенина, 5 литер Б",
+                        "org": "CLEARFORMAT",
+                        "email": "print-center@clear-format.com",
+                        "phone": "7 (911) 167-18-67",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Санкт-Петербург",
+                        "city": "Санкт-Петербург",
+                        "street": "улица Есенина",
+                        "house": "5Б",
+                        "postalCode": "194354",
+                        "fullAddress": "Россия, Санкт-Петербург, улица Есенина, 5Б",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            30.33149,
+                            60.037063
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 2,
+                        "excelRow": 2,
+                        "query": "Москва, Переулок Гороховский, 12с6",
+                        "citySource": "Москва",
+                        "addressSource": "Переулок Гороховский, 12с6",
+                        "org": "Мастерская эстетических реставраций Матвеева Алексея",
+                        "email": "by.matveev.alexey@yandex.ru",
+                        "phone": "7 (926) 391-02-21",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Москва",
+                        "city": "Москва",
+                        "street": "Гороховский переулок",
+                        "house": "12с6",
+                        "postalCode": "105064",
+                        "fullAddress": "Россия, Москва, Гороховский переулок, 12с6",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            37.668363,
+                            55.764131
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 3,
+                        "excelRow": 3,
+                        "query": "Нижний Новгород, Ул. Кулибина д 3",
+                        "citySource": "Нижний Новгород",
+                        "addressSource": "Ул. Кулибина д 3",
+                        "org": "Atlas",
+                        "email": "atlas@atlaslab.ru",
+                        "phone": "8 (800) 200 99-11",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Нижегородская область",
+                        "city": "Нижний Новгород",
+                        "street": "улица Кулибина",
+                        "house": "3",
+                        "postalCode": "603022",
+                        "fullAddress": "Россия, Нижний Новгород, улица Кулибина, 3",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            43.989062,
+                            56.307392
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 4,
+                        "excelRow": 4,
+                        "query": "Чебоксары, Ул. Б.С.Маркова 14 А",
+                        "citySource": "Чебоксары",
+                        "addressSource": "Ул. Б.С.Маркова 14 А",
+                        "org": "ООО Айдентика-лаб",
+                        "email": "cnccad@mail.ru",
+                        "phone": "7 (987) 669-53-39",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Чувашская Республика — Чувашия",
+                        "city": "Чебоксары",
+                        "street": "улица Бориса Семёновича Маркова",
+                        "house": "14А",
+                        "postalCode": "",
+                        "fullAddress": "Россия, Чувашская Республика — Чувашия, Чебоксары, улица Бориса Семёновича Маркова, 14А",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            47.232169,
+                            56.141126
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 5,
+                        "excelRow": 5,
+                        "query": "Казань, Ул. Рихарда Зорги 79",
+                        "citySource": "Казань",
+                        "addressSource": "Ул. Рихарда Зорги 79",
+                        "org": "Smile Design",
+                        "email": "ilyas.ilyasov.1984@gmail.com",
+                        "phone": "79196353033",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Республика Татарстан (Татарстан)",
+                        "city": "Казань",
+                        "street": "улица Рихарда Зорге",
+                        "house": "79",
+                        "postalCode": "",
+                        "fullAddress": "Россия, Республика Татарстан (Татарстан), Казань, улица Рихарда Зорге, 79",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            49.21635,
+                            55.747698
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 6,
+                        "excelRow": 6,
+                        "query": "Ростов-на-Дону, Пр. Космонавтов, д 39/1",
+                        "citySource": "Ростов-на-Дону",
+                        "addressSource": "Пр. Космонавтов, д 39/1",
+                        "org": "Лаборатория Братьев Сартаковых",
+                        "email": "ZtlSartakov@mail.ru",
+                        "phone": "7 (938) 174-35-43",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Ростовская область",
+                        "city": "Ростов-на-Дону",
+                        "street": "проспект Космонавтов",
+                        "house": "39/1",
+                        "postalCode": "344092",
+                        "fullAddress": "Россия, Ростов-на-Дону, микрорайон Северный, проспект Космонавтов, 39/1",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            39.712354,
+                            47.296676
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 7,
+                        "excelRow": 7,
+                        "query": "Краснодар, Ул. Калинина д 83",
+                        "citySource": "Краснодар",
+                        "addressSource": "Ул. Калинина д 83",
+                        "org": "Dental Upgrade Laboratory",
+                        "email": "up.lab1@mail.ru",
+                        "phone": "79898321751",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Краснодарский край",
+                        "city": "Краснодар",
+                        "street": "улица имени Калинина",
+                        "house": "83",
+                        "postalCode": "",
+                        "fullAddress": "Россия, Краснодар, улица имени Калинина, 83",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            38.939632,
+                            45.042935
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 8,
+                        "excelRow": 8,
+                        "query": "Пермь, Ул. Лебедева д 25 лит Б",
+                        "citySource": "Пермь",
+                        "addressSource": "Ул. Лебедева д 25 лит Б",
+                        "org": "ООО «АСТРАДЕНТ»",
+                        "email": "astra_dent@mail.ru",
+                        "phone": "7 (982) 466-66-53",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Пермский край",
+                        "city": "Пермь",
+                        "street": "улица Лебедева",
+                        "house": "25Б",
+                        "postalCode": "614107",
+                        "fullAddress": "Россия, Пермь, улица Лебедева, 25Б",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            56.287987,
+                            58.019961
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 9,
+                        "excelRow": 9,
+                        "query": "Екатеринбург, Ул. Мамина Сибиряка д 85",
+                        "citySource": "Екатеринбург",
+                        "addressSource": "Ул. Мамина Сибиряка д 85",
+                        "org": "Зуботехническая лаборатория ПРОГРЕСС",
+                        "email": "progress.zl@mail.ru",
+                        "phone": "7 (922) 603-96-99",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Свердловская область",
+                        "city": "Екатеринбург",
+                        "street": "улица Мамина-Сибиряка",
+                        "house": "85",
+                        "postalCode": "620075",
+                        "fullAddress": "Россия, Свердловская область, Екатеринбург, улица Мамина-Сибиряка, 85",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            60.615908,
+                            56.846706
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 10,
+                        "excelRow": 10,
+                        "query": "Москва, Ул. Орджоникидзе, 11 с 7",
+                        "citySource": "Москва",
+                        "addressSource": "Ул. Орджоникидзе, 11 с 7",
+                        "org": "Generic lab",
+                        "email": "e.kkkuznetsoff@yandex.ru",
+                        "phone": "79775302877",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Москва",
+                        "city": "Москва",
+                        "street": "улица Орджоникидзе",
+                        "house": "11с7",
+                        "postalCode": "115419",
+                        "fullAddress": "Россия, Москва, улица Орджоникидзе, 11с7",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            37.592186,
+                            55.708212
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 11,
+                        "excelRow": 11,
+                        "query": "Москва, Ул. Михалковская 63 Б стр 4",
+                        "citySource": "Москва",
+                        "addressSource": "Ул. Михалковская 63 Б стр 4",
+                        "org": "Краун Дизайн",
+                        "email": "crowndesigninfo@mail.ru",
+                        "phone": "",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Москва",
+                        "city": "Москва",
+                        "street": "Михалковская улица",
+                        "house": "63Бс4",
+                        "postalCode": "125438",
+                        "fullAddress": "Россия, Москва, Михалковская улица, 63Бс4",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            37.510322,
+                            55.835948
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 12,
+                        "excelRow": 12,
+                        "query": "Октябрьский, ул. Куйбышева д 40/1",
+                        "citySource": "Октябрьский",
+                        "addressSource": "ул. Куйбышева д 40/1",
+                        "org": "ООО Евадент",
+                        "email": "albertsmail@mail.ru",
+                        "phone": "79273062959",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Республика Башкортостан",
+                        "city": "Октябрьский",
+                        "street": "улица Куйбышева",
+                        "house": "40/1",
+                        "postalCode": "",
+                        "fullAddress": "Россия, Республика Башкортостан, Октябрьский, улица Куйбышева, 40/1",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            53.486599,
+                            54.49103
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 13,
+                        "excelRow": 13,
+                        "query": "Москва, ул. Бутлерова, д. 17Б",
+                        "citySource": "Москва",
+                        "addressSource": "ул. Бутлерова, д. 17Б",
+                        "org": "ООО «БУТИК ЛАБ-ЭСТЕТ»",
+                        "email": "",
+                        "phone": "7985-167-22-99",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Москва",
+                        "city": "Москва",
+                        "street": "улица Бутлерова",
+                        "house": "17Б",
+                        "postalCode": "117342",
+                        "fullAddress": "Россия, Москва, улица Бутлерова, 17Б",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            37.540856,
+                            55.648214
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 14,
+                        "excelRow": 14,
+                        "query": "Астрахань, Пл. Карла Маркса д 33",
+                        "citySource": "Астрахань",
+                        "addressSource": "Пл. Карла Маркса д 33",
+                        "org": "ДЕНТАР",
+                        "email": "dent@astranet.ru",
+                        "phone": "79275830053",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Астраханская область",
+                        "city": "Астрахань",
+                        "street": "площадь Карла Маркса",
+                        "house": "33",
+                        "postalCode": "414040",
+                        "fullAddress": "Россия, Астрахань, площадь Карла Маркса, 33",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            48.060631,
+                            46.35376
+                        ]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "id": 15,
+                        "excelRow": 15,
+                        "query": "Ростов-на-Дону, Ул. Пушкинская д 211 к 95",
+                        "citySource": "Ростов-на-Дону",
+                        "addressSource": "Ул. Пушкинская д 211 к 95",
+                        "org": "Городская стоматологическая поликлиника в г. Ростове-на-Дону",
+                        "email": "city-dent@city-dent.ru",
+                        "phone": "79034711116",
+                        "country": "Россия",
+                        "countryCode": "RU",
+                        "region": "Ростовская область",
+                        "city": "Ростов-на-Дону",
+                        "street": "Пушкинская улица",
+                        "house": "211",
+                        "postalCode": "344022",
+                        "fullAddress": "Россия, Ростов-на-Дону, Пушкинская улица, 211",
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            39.734623,
+                            47.229648
+                        ]
+                    }
+                }
+            ]
+        };
+
+
+        function buildMarker(properties = {}) {
+            const element = document.createElement("div");
+            element.className = "marker";
+            element.title = properties.city || "";
+
+            const icon = properties.icon
+                || iconUrl;
+
+            element.style.backgroundImage = `url("${icon}")`;
+
+            return element;
+        }
+
+        function buildFeature(data) {
+            const { coords, element, properties } = data || {};
+            return new ymaps3.YMapFeature({
+                geometry: {
+                    type: "Point",
+                    coordinates: coords
+                },
+                properties,
+                style: {
+                    element
+                }
+            });
+        }
+
+        function addGeoJsonFeatures(geoJson) {
+            if (!geoJson || geoJson.type !== "FeatureCollection" || !Array.isArray(geoJson.features)) {
+                console.warn("Invalid GeoJSON", geoJson);
+                return;
+            }
+
+            geoJson.features
+                .filter((feature) =>
+                    feature &&
+                    feature.geometry &&
+                    feature.geometry.type === "Point" &&
+                    Array.isArray(feature.geometry.coordinates)
+                )
+                .forEach((feature, index) => {
+                    const coords = feature.geometry.coordinates;
+                    const properties = feature.properties || {};
+
+                    const element = buildMarker(properties);
+                    const pointFeature = buildFeature({ coords, element, properties });
+
+                    map.addChild(pointFeature);
+
+                    element.addEventListener("click", () => onMarkerClick(properties));
+                });
+
+        }
+
+        function onMarkerClick(properties = {}) {
+            const { city, org, address, email, phone } = properties;
+
+            const data = [
+                city,
+                org,
+                address,
+                email ? `Email: ${email}` : null,
+                phone ? `Тел: ${phone}` : null
+            ].filter(Boolean);
+
+            if (!data.length) return;
+
+            alert(data.join("\n"));
+        }
+
+        const getGeoJsonBounds = (geoJson) => {
+            const coords = geoJson?.features
+                ?.map((f) => f?.geometry?.coordinates)
+                ?.filter((c) => Array.isArray(c) && c.length === 2)
+                ?.filter(([lng, lat]) => Number.isFinite(lng) && Number.isFinite(lat));
+
+            if (!coords?.length) return null;
+
+
+            const [minLng, maxLng, minLat, maxLat] = coords.reduce(
+                ([minLng, maxLng, minLat, maxLat], [lng, lat]) => [
+                    minLng === null || lng < minLng ? lng : minLng,
+                    maxLng === null || lng > maxLng ? lng : maxLng,
+                    minLat === null || lat < minLat ? lat : minLat,
+                    maxLat === null || lat > maxLat ? lat : maxLat
+                ],
+                [null, null, null, null]
+            );
+
+            return [
+                [minLng, minLat],
+                [maxLng, maxLat]
+            ];
+        };
+
+        const fitBounds = (bounds, duration = 400) => {
+            if (!bounds) return;
+
+            map.update({
+                location: {
+                    bounds,
+                    easing: 'ease-in-out',
+                    duration
+                }
+            });
+        };
+
+
+        async function onInitMaps() {
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer } = ymaps3;
+
+            const container = document.getElementById("maps");
+
+            map = new YMap(container, mapOptions);
+
+            map.addChild(new YMapDefaultSchemeLayer());
+            map.addChild(new YMapDefaultFeaturesLayer());
+
+            addGeoJsonFeatures(pointsGeoJson);
+
+            setTimeout(() => {
+                const bounds = getGeoJsonBounds(pointsGeoJson);
+                console.log('Calculated bounds:', bounds);
+                if (bounds) {
+                    fitBounds(bounds);
+                }
+            }, 100);
+
+        }
+
+        const YMAPS_SCRIPT_ID = "ymaps3Script";
+        let ymapsLoading = null;
+
+        const buildYMapsSrc = (config = {}) => {
+            const { enterprise = false, version = "v3", ...params } = config;
+            const query = Object.entries(params)
+                .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+                .join("&");
+
+            return `https://${enterprise ? "enterprise." : ""}api-maps.yandex.ru/${version}/?${query}`;
+        };
+
+        const createYMapsScript = (src) => {
+            const script = document.createElement("script");
+            script.id = YMAPS_SCRIPT_ID;
+            script.async = true;
+            script.defer = true;
+            script.src = src;
+            return script;
+        };
+
+        const ensureReady = () =>
+            window.ymaps3?.ready
+                ? window.ymaps3.ready.then(() => window.ymaps3)
+                : Promise.resolve(window.ymaps3);
+
+        const loadYMaps = (config = {}) => {
+            if (window.ymaps3?.ready) return Promise.resolve(window.ymaps3);
+            if (ymapsLoading) return ymapsLoading;
+
+            const handleLoad = (resolve) => () => ensureReady().then(resolve);
+
+            const existing = document.getElementById(YMAPS_SCRIPT_ID);
+            if (existing) {
+                ymapsLoading = new Promise((resolve, reject) => {
+                    existing.addEventListener("load", handleLoad(resolve), { once: true });
+                    existing.addEventListener("error", reject, { once: true });
+                });
+                return ymapsLoading;
+            }
+
+            const script = createYMapsScript(buildYMapsSrc(config));
+
+            ymapsLoading = new Promise((resolve, reject) => {
+                script.addEventListener("load", handleLoad(resolve), { once: true });
+                script.addEventListener("error", reject, { once: true });
+            });
+
+            document.head.appendChild(script);
+
+            return ymapsLoading;
+        };
+
+        function onReady() {
+            loadYMaps(YMAPS_CONFIG)
+                .then(() => ymaps3.ready.then(onInitMaps))
+                .catch((error) => console.error("Error maps:", error));
+        }
+
+        document.addEventListener("DOMContentLoaded", onReady);
+
+    </script>
+
+</body>
+
+</html>
