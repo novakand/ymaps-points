@@ -627,14 +627,7 @@
             map.addChild(new YMapDefaultFeaturesLayer());
 
             addGeoJsonFeatures(pointsGeoJson);
-
-            setTimeout(() => {
-                const bounds = getGeoJsonBounds(pointsGeoJson);
-                console.log('Calculated bounds:', bounds);
-                if (bounds) {
-                    fitBounds(bounds);
-                }
-            }, 100);
+            fitBounds(getGeoJsonBounds(pointsGeoJson));
 
         }
 
