@@ -690,7 +690,6 @@
 
             const popup = markerElement._popup;
 
-            // повторный клик по маркеру — закрываем
             if (popup.style.display === "block") {
                 popup.style.display = "none";
                 currentOpenPopup = null;
@@ -710,10 +709,20 @@
   <button type="button" class="marker__popup-close" aria-label="Close">&times;</button>
 </div>
 <div class="marker__popup-body">
-  ${city ? `<div class="marker__popup-line"><span class="marker__popup-label">City:</span> ${city}</div>` : ""}
-  ${fullAddress ? `<div class="marker__popup-line"><span class="marker__popup-label">Address:</span> ${fullAddress}</div>` : ""}
-  ${email ? `<div class="marker__popup-line"><span class="marker__popup-label">Email:</span> ${email}</div>` : ""}
-  ${phone ? `<div class="marker__popup-line"><span class="marker__popup-label">Phone:</span> ${phone}</div>` : ""}
+  ${city ? `<div class="marker__popup-line"><span class="marker__popup-label">Город:</span> ${city}</div>` : ""}
+  ${fullAddress ? `<div class="marker__popup-line"><span class="marker__popup-label">Адрес:</span> ${fullAddress}</div>` : ""}
+  ${email ? `
+  <div class="marker__popup-line">
+    <span class="marker__popup-label">Email:</span>
+    <a href="mailto:${email}" class="marker__popup-email">${email}</a>
+  </div>
+` : ""}
+  ${phone ? `
+  <div class="marker__popup-line">
+    <span class="marker__popup-label">Телефон:</span>
+    <a href="tel:${phone.replace(/[^\d+]/g, '')}" class="marker__popup-phone">${phone}</a>
+  </div>
+` : ""}
   ${url ? ` <a href="${url}" target="_blank" rel="noopener noreferrer">Подробнее</a>` : ""}
 </div>
 `;
