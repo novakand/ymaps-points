@@ -27,19 +27,92 @@
             width: 100%;
         }
 
-        .marker {
-            width: 32px;
-            height: 48px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            cursor: pointer;
-        }
-
         .maps {
             width: 100%;
             height: 100vh;
             overflow: hidden;
+        }
+
+        .marker {
+            position: absolute;
+            cursor: pointer;
+            transform: translate(-50%, calc(-100% + 2px));
+        }
+
+        .marker svg {
+            display: block;
+        }
+
+        .marker__background {
+            filter: drop-shadow(0px 2px 6px rgba(24, 27, 34, 0.4));
+        }
+
+        .marker__stroke {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            left: 50%;
+            top: 50%;
+        }
+
+        .marker__icon {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+        }
+
+        .marker__icon-inner {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #ffffff;
+        }
+
+        .marker__popup {
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 12px);
+            transform: translateX(-50%);
+            min-width: 220px;
+            max-width: 260px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            z-index: 10;
+            color: black;
+        }
+
+        .marker__popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .marker__popup-close {
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .marker__popup-line+.marker__popup-line {
+            margin-top: 2px;
+        }
+
+        .marker__popup-label {
+            font-weight: 600;
+            margin-right: 4px;
         }
     </style>
 
@@ -47,11 +120,12 @@
 
         const YMAPS_CONFIG = {
             apikey: "042405c2-12f5-4b78-9580-cb5ea1d7c106",
-            lang: "en_US"
+            lang: "ru_RU"
         };
         const MAP_MARGIN = [200, 200, 200, 200];
 
         let map;
+        let currentOpenPopup = null;
         const iconUrl = "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png";
         const mapOptions = {
             location: {
@@ -88,7 +162,8 @@
                         "house": "5Б",
                         "postalCode": "194354",
                         "fullAddress": "Россия, Санкт-Петербург, улица Есенина, 5Б",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -117,7 +192,8 @@
                         "house": "12с6",
                         "postalCode": "105064",
                         "fullAddress": "Россия, Москва, Гороховский переулок, 12с6",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -146,7 +222,8 @@
                         "house": "3",
                         "postalCode": "603022",
                         "fullAddress": "Россия, Нижний Новгород, улица Кулибина, 3",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -175,7 +252,8 @@
                         "house": "14А",
                         "postalCode": "",
                         "fullAddress": "Россия, Чувашская Республика — Чувашия, Чебоксары, улица Бориса Семёновича Маркова, 14А",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -204,7 +282,8 @@
                         "house": "79",
                         "postalCode": "",
                         "fullAddress": "Россия, Республика Татарстан (Татарстан), Казань, улица Рихарда Зорге, 79",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -233,7 +312,8 @@
                         "house": "39/1",
                         "postalCode": "344092",
                         "fullAddress": "Россия, Ростов-на-Дону, микрорайон Северный, проспект Космонавтов, 39/1",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -262,7 +342,8 @@
                         "house": "83",
                         "postalCode": "",
                         "fullAddress": "Россия, Краснодар, улица имени Калинина, 83",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -291,7 +372,8 @@
                         "house": "25Б",
                         "postalCode": "614107",
                         "fullAddress": "Россия, Пермь, улица Лебедева, 25Б",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -320,7 +402,8 @@
                         "house": "85",
                         "postalCode": "620075",
                         "fullAddress": "Россия, Свердловская область, Екатеринбург, улица Мамина-Сибиряка, 85",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -349,7 +432,8 @@
                         "house": "11с7",
                         "postalCode": "115419",
                         "fullAddress": "Россия, Москва, улица Орджоникидзе, 11с7",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -378,7 +462,8 @@
                         "house": "63Бс4",
                         "postalCode": "125438",
                         "fullAddress": "Россия, Москва, Михалковская улица, 63Бс4",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -407,7 +492,8 @@
                         "house": "40/1",
                         "postalCode": "",
                         "fullAddress": "Россия, Республика Башкортостан, Октябрьский, улица Куйбышева, 40/1",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -436,7 +522,8 @@
                         "house": "17Б",
                         "postalCode": "117342",
                         "fullAddress": "Россия, Москва, улица Бутлерова, 17Б",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -465,7 +552,8 @@
                         "house": "33",
                         "postalCode": "414040",
                         "fullAddress": "Россия, Астрахань, площадь Карла Маркса, 33",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -494,7 +582,8 @@
                         "house": "211",
                         "postalCode": "344022",
                         "fullAddress": "Россия, Ростов-на-Дону, Пушкинская улица, 211",
-                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png"
+                        "icon": "https://static.tildacdn.com/tild6663-3739-4037-a363-643937643937/photo.png",
+                        "url": "https://clear-format.com"
                     },
                     "geometry": {
                         "type": "Point",
@@ -511,15 +600,30 @@
         function buildMarker(properties = {}) {
             const element = document.createElement("div");
             element.className = "marker";
-            element.title = properties.city || "";
+            element.title = properties.city || properties.org || "";
 
-            const icon = properties.icon
-                || iconUrl;
+            element.style.color = "#E63D2E";
 
-            element.style.backgroundImage = `url("${icon}")`;
+            const icon = properties.icon || iconUrl;
+
+            const bg = document.createElement("div");
+            bg.className = "marker__background";
+            bg.innerHTML = `
+<svg width="32" height="40" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 0C7.1632 0 0 7.1632 0 16C0 20.4168 1.7896 24.416 4.684 27.3112C7.5792 30.208 14.4 34.4 14.8 38.8C14.86 39.4597 15.3376 40 16 40C16.6624 40 17.14 39.4597 17.2 38.8C17.6 34.4 24.4208 30.208 27.316 27.3112C30.2104 24.416 32 20.4168 32 16C32 7.1632 24.8368 0 16 0Z" fill="#FF4433"/>
+<path d="M15.9999 21.6004C19.0927 21.6004 21.5999 19.0932 21.5999 16.0004C21.5999 12.9076 19.0927 10.4004 15.9999 10.4004C12.9071 10.4004 10.3999 12.9076 10.3999 16.0004C10.3999 19.0932 12.9071 21.6004 15.9999 21.6004Z" fill="white"/>
+</svg>
+`;
+            element.appendChild(bg);
+            const popup = document.createElement("div");
+            popup.className = "marker__popup";
+            popup.style.display = "none";
+            element.appendChild(popup);
+            element._popup = popup;
 
             return element;
         }
+
 
         function buildFeature(data) {
             const { coords, element, properties } = data || {};
@@ -551,32 +655,81 @@
                 .forEach((feature, index) => {
                     const coords = feature.geometry.coordinates;
                     const properties = feature.properties || {};
+                    console.log(properties,'')
 
                     const element = buildMarker(properties);
                     const pointFeature = buildFeature({ coords, element, properties });
 
                     map.addChild(pointFeature);
 
-                    element.addEventListener("click", () => onMarkerClick(properties));
+                    element.addEventListener("click", (event) => {
+                        onMarkerClick(properties, element);
+                    });;
                 });
 
         }
 
-        function onMarkerClick(properties = {}) {
-            const { city, org, address, email, phone } = properties;
+    function onMarkerClick(properties = {}, markerElement) {
 
-            const data = [
-                city,
-                org,
-                address,
-                email ? `Email: ${email}` : null,
-                phone ? `Тел: ${phone}` : null
-            ].filter(Boolean);
+    if (!markerElement || !markerElement._popup) {
+        const { city, org, fullAddress, email, phone, url } = properties;
+        const data = [
+            city,
+            org,
+            fullAddress,
+            email ? `Email: ${email}` : null,
+            phone ? `Тел: ${phone}` : null,
+            url ? `URL: ${url}` : null,
+        ].filter(Boolean);
+        if (!data.length) return;
+        return;
+    }
 
-            if (!data.length) return;
+    const popup = markerElement._popup;
 
-            alert(data.join("\n"));
-        }
+    // повторный клик по маркеру — закрываем
+    if (popup.style.display === "block") {
+        popup.style.display = "none";
+        currentOpenPopup = null;
+        return;
+    }
+
+    if (currentOpenPopup && currentOpenPopup !== popup) {
+        currentOpenPopup.style.display = "none";
+    }
+
+    const { city, org, fullAddress, email, phone, url } = properties;
+    const title = org || city || "Organization";
+
+    popup.innerHTML = `
+<div class="marker__popup-header">
+  <div class="marker__popup-title">${title}</div>
+  <button type="button" class="marker__popup-close" aria-label="Close">&times;</button>
+</div>
+<div class="marker__popup-body">
+  ${city ? `<div class="marker__popup-line"><span class="marker__popup-label">City:</span> ${city}</div>` : ""}
+  ${fullAddress ? `<div class="marker__popup-line"><span class="marker__popup-label">Address:</span> ${fullAddress}</div>` : ""}
+  ${email ? `<div class="marker__popup-line"><span class="marker__popup-label">Email:</span> ${email}</div>` : ""}
+  ${phone ? `<div class="marker__popup-line"><span class="marker__popup-label">Phone:</span> ${phone}</div>` : ""}
+  ${url ? ` <a href="${url}" target="_blank" rel="noopener noreferrer">Подробнее</a>` : ""}
+</div>
+`;
+
+    popup.style.display = "block";
+    currentOpenPopup = popup;
+    popup.addEventListener("click", (e) => e.stopPropagation());
+
+    const closeBtn = popup.querySelector(".marker__popup-close");
+    if (closeBtn) {
+        closeBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            popup.style.display = "none";
+            if (currentOpenPopup === popup) {
+                currentOpenPopup = null;
+            }
+        };
+    }
+}
 
         const getGeoJsonBounds = (geoJson) => {
             const coords = geoJson?.features
@@ -627,7 +780,13 @@
             map.addChild(new YMapDefaultFeaturesLayer());
 
             addGeoJsonFeatures(pointsGeoJson);
-            fitBounds(getGeoJsonBounds(pointsGeoJson));
+
+
+            const bounds = getGeoJsonBounds(pointsGeoJson);
+            if (bounds) {
+                fitBounds(bounds);
+            }
+
 
         }
 
