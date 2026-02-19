@@ -8,10 +8,6 @@
         content="width=device-width, initial-scale=1.0"
     >
     <title>Ymaps Points</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap"
-        rel="stylesheet"
-    >
 </head>
 
 <body>
@@ -30,32 +26,6 @@
   including its SVG icon. It is cloned in JavaScript for each point
   on the map.
   -->
-
-
-    <template id="search-marker-template">
-        <div class="search-marker">
-            <div class="search-marker__icon">
-                <img class="search-marker__img" />
-            </div>
-
-            <div class="search-marker__title">
-                <div class="search-marker__name"></div>
-
-                <div
-                    class="search-marker__rating"
-                    hidden
-                >
-                    ⭐ <span class="search-marker__rating-value"></span>
-                </div>
-
-                <div
-                    class="search-marker__subtitle"
-                    hidden
-                ></div>
-            </div>
-        </div>
-    </template>
-
     <template id="marker-template">
         <div class="marker">
             <div class="marker__content">
@@ -358,60 +328,6 @@
     </template>
 
 
-    <template id="yandex-marker-template">
-        <div
-            class="map-placemark"
-            style="cursor:pointer;"
-        >
-            <div
-                class="map-placemark__wrapper"
-                dir="ltr"
-                aria-hidden="true"
-            >
-
-                <div class="search-placemark-view _position_right">
-
-                    <div class="search-placemark-view__icon">
-                        <div class="search-placemark-icon _mode_active _state_default">
-                            <div class="search-placemark-icon__img-wrapper">
-                                <img class="search-placemark-icon__img" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- <div class="search-placemark-view__title">
-                        <div class="search-placemark-title _position_right _no-truncate">
-
-                            <div class="search-placemark-title__title">
-                                <div class="search-placemark-title__title-text"></div>
-
-                                <div
-                                    class="search-placemark-title__title-rating"
-                                    hidden
-                                >
-                                    ⭐
-                                    <span class="search-placemark-title-modular-hint-view__rating"></span>
-                                </div>
-                            </div>
-
-                            <div
-                                class="search-placemark-title__subtitle"
-                                hidden
-                            >
-                                <span class="search-placemark-title__subtitle-item"></span>
-                            </div>
-
-                        </div>
-                    </div> -->
-
-                </div>
-            </div>
-        </div>
-    </template>
-
-
-
-
     <style>
         html,
         body {
@@ -479,53 +395,6 @@
             padding-right: 20px;
         }
 
-        .map-placemark {
-            position: absolute;
-            transform: translate(0, 0);
-        }
-
-        .search-placemark-view {
-            position: relative;
-            margin-top: -64px;
-            margin-left: -30px;
-        }
-
-        .search-placemark-view__icon {
-            width: 60px;
-            height: 68px;
-        }
-
-        .search-placemark-icon__img-wrapper {
-            width: 60px;
-            height: 68px;
-        }
-
-        .search-placemark-icon__img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .35));
-        }
-
-        .search-placemark-view__title {
-            margin-top: 28px;
-            background: #fff;
-            border-radius: 10px;
-            padding: 4px 8px;
-            font-size: 12px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
-            white-space: nowrap;
-        }
-
-        .search-placemark-title__title-text {
-            font-weight: 600;
-        }
-
-        .search-placemark-title__subtitle {
-            font-size: 11px;
-            color: #777;
-        }
-
         .header_title {
             font-size: 16px;
             font-weight: 400;
@@ -569,37 +438,6 @@
             word-wrap: break-word;
             word-break: break-word;
         }
-
-
-        .cluster-marker {
-            width: 50px;
-            height: 50px;
-            background: #9A8A35;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 2;
-            box-shadow:
-                0 0 0 4px #fff,
-                /* белая обводка */
-                0 2px 6px rgba(24, 27, 34, .5);
-            /* твоя тень */
-        }
-
-        .cluster-marker__content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-
-            line-height: 20px;
-            color: #fff;
-
-        }
     </style>
 
     <script>
@@ -615,9 +453,6 @@
         let popup = null;
         let currentPopup = null;
         let map;
-        let clusterer = null;
-        let YMapClustererClass = null;
-        let clusterByGridMethod = null;
 
         /**
      * Global Yandex Maps configuration.
@@ -647,6 +482,7 @@
             margin: MAP_MARGIN,
             bounds: [[-83.8, -170.8], [83.8, 170.8]],
         };
+
 
         const datGeoJson = {
             "type": "FeatureCollection", "features": [
@@ -869,33 +705,23 @@
 
 
         function createMarkerTemplate(properties = {}) {
-            const tpl = document.getElementById("yandex-marker-template");
-            const el = tpl.content.firstElementChild.cloneNode(true);
+            const template = document.getElementById("marker-template");
 
-            const img = el.querySelector(".search-placemark-icon__img");
-            const title = el.querySelector(".search-placemark-title__title-text");
-            const ratingWrap = el.querySelector(".search-placemark-title__title-rating");
-            const rating = el.querySelector(".search-placemark-title-modular-hint-view__rating");
-            const subtitleWrap = el.querySelector(".search-placemark-title__subtitle");
-            const subtitle = el.querySelector(".search-placemark-title__subtitle-item");
-
-            img.src =
-                properties.icon ||
-                "https://avatars.mds.yandex.net/get-tycoon/15585542/27401508_pin_search_standard_2025-10-03T16_28_10/pin_x2";
-
-            // title.textContent = properties.org || properties.city || "Организация";
-
-            if (properties.rating) {
-                ratingWrap.hidden = false;
-                rating.textContent = properties.rating;
+            if (template && template.content && template.content.firstElementChild) {
+                const element = template.content.firstElementChild.cloneNode(true);
+                element.title = properties.city || properties.org || "";
+                return element;
             }
 
-            if (properties.worktime) {
-                subtitleWrap.hidden = false;
-                subtitle.textContent = properties.worktime;
-            }
+            const element = document.createElement("div");
+            element.className = "marker";
+            element.title = properties.city || properties.org || "";
 
-            return el;
+            const bg = document.createElement("div");
+            bg.className = "marker__content";
+            element.appendChild(bg);
+
+            return element;
         }
 
         function buildMarker(properties = {}) {
@@ -923,112 +749,24 @@
                 return;
             }
 
-            if (!YMapClustererClass || !clusterByGridMethod || !map) {
-                console.warn("Clusterer is not ready");
-                return;
-            }
-
-            // Готовим массив Feature'ов для кластеризатора
-            const features = geoJson.features
+            geoJson.features
                 .filter((feature) =>
                     feature &&
                     feature.geometry &&
                     feature.geometry.type === "Point" &&
                     Array.isArray(feature.geometry.coordinates)
                 )
-                .map((feature, index) => {
+                .forEach((feature, index) => {
                     const coords = feature.geometry.coordinates;
                     const properties = feature.properties || {};
 
-                    // создаём DOM-элемент маркера сразу, повесим обработчик клика
                     const element = buildMarker(properties);
+                    const pointFeature = buildFeature({ coords, element, properties });
 
-                    element.addEventListener("click", () =>
-                        onMarkerClick(properties, element, coords)
-                    );
+                    map.addChild(pointFeature);
 
-                    return {
-                        type: "Feature",
-                        id: properties.id != null ? properties.id : `f-${index}`,
-                        geometry: {
-                            type: "Point",
-                            coordinates: coords
-                        },
-                        properties: {
-                            ...properties,
-                            _markerElement: element // пробрасываем DOM внутрь feature
-                        }
-                    };
+                    element.addEventListener("click", () => onMarkerClick(properties, element, coords));
                 });
-
-            if (!features.length) return;
-
-            if (!clusterer) {
-                // Создаём кластеризатор один раз
-                clusterer = new YMapClustererClass({
-                    method: clusterByGridMethod({ gridSize: 200 }),
-
-                    features,
-
-                    // Одиночный маркер
-                    marker: (feature) => {
-                        const props = feature.properties || {};
-                        const coords = feature.geometry.coordinates;
-                        const element = props._markerElement || buildMarker(props);
-
-                        // На всякий случай — если пришёл без обработчика
-                        if (!element._popupBound) {
-                            element.addEventListener("click", () =>
-                                onMarkerClick(props, element, coords)
-                            );
-                            element._popupBound = true;
-                        }
-
-                        return new ymaps3.YMapMarker(
-                            {
-                                coordinates: coords
-                            },
-                            element
-                        );
-                    },
-
-                    // Маркер кластера
-                    cluster: (coordinates, clusterFeatures) => {
-                        const clusterElement = document.createElement("div");
-                        clusterElement.className = "marker cluster-marker";
-
-                        const content = document.createElement("div");
-                        content.className = "marker__content cluster-marker__content";
-                        content.textContent = String(clusterFeatures.length);
-
-                        clusterElement.appendChild(content);
-
-                        return new ymaps3.YMapMarker(
-                            {
-                                coordinates,
-                                onClick() {
-                                    // При клике зуммируемся к кластеру
-                                    if (!map) return;
-                                    map.update({
-                                        location: {
-                                            center: coordinates,
-                                            zoom: Math.min((map.zoom || 5) + 2, 22),
-                                            duration: 400,
-                                            easing: "ease-in-out"
-                                        }
-                                    });
-                                }
-                            },
-                            clusterElement
-                        );
-                    }
-                });
-
-                map.addChild(clusterer);
-            } else {
-                // Обновление набора точек, если понадобится
-                clusterer.update({ features });
-            }
         }
 
         const normalizePhone = (phone) =>
@@ -1170,11 +908,6 @@
             const { YMapPopupMarker } = await ymaps3.import('@yandex/ymaps3-default-ui-theme');
             popup = YMapPopupMarker;
 
-            // NEW: импорт кластеризатора
-            const { YMapClusterer, clusterByGrid } = await ymaps3.import('@yandex/ymaps3-clusterer');
-            YMapClustererClass = YMapClusterer;
-            clusterByGridMethod = clusterByGrid;
-
             const container = document.getElementById("maps");
 
             map = new YMap(container, mapOptions);
@@ -1244,10 +977,7 @@
                 .then(() => (
                     ymaps3.import.registerCdn(
                         'https://cdn.jsdelivr.net/npm/{package}',
-                        [
-                            '@yandex/ymaps3-default-ui-theme@latest',
-                            '@yandex/ymaps3-clusterer@0.0' // NEW: кластеризатор
-                        ]
+                        ['@yandex/ymaps3-default-ui-theme@latest']
                     ),
                     onInitMaps()
                 ))
