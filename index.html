@@ -283,15 +283,8 @@
 
   This template is used to render the popup shown when a marker
   is clicked. Fields are filled in dynamically via JavaScript:
-  - .marker__popup-title
-  - .popup-city-value
-  - .popup-address-value
-  - .popup-email-value
-  - .popup-phone-value
-  - .popup-url-value
+
   -->
-
-
 
 
     <template id="popup-template">
@@ -408,9 +401,6 @@
             </div>
         </div>
     </template>
-
-
-
 
     <style>
         html,
@@ -580,7 +570,6 @@
             word-wrap: break-word;
             word-break: break-word;
         }
-
 
         .cluster-marker {
             width: 50px;
@@ -2070,7 +2059,6 @@
             }
         }
 
-
         function updateSearchMarker(searchResult) {
             if (!map) return;
 
@@ -2159,7 +2147,6 @@
 
             return wrapper.innerHTML.trim();
         };
-
 
         function buildPopupContent(properties = {}) {
             const contentEl = document.createElement("div");
